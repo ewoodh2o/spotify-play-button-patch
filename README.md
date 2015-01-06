@@ -1,32 +1,68 @@
-Play Button iTunes patch
-========================
-
-You can download the compressed patch at <http://www.thebitguru.com/projects/iTunesPatch>.
+OS X Control Patch for Spotify
+==============================
 
 Overview
 --------
-This is a patch for removing the default OS X behavior of _always_ starting
-iTunes when the play button on the keyboard is pressed.  This feature can be
-useful for a lot of users, but it can also be annoying if you are using VLC or
-other similar programs that support the media keys.
+This patch changes the default behavior of the Play/Pause, Back and Next keys in
+OS X to control Spotify rather than iTunes.  It also adds support for inline-mic
+control buttons to manage Spotify playback.  Presumably this also works with IR
+remote controls, although I no longer have one of those for my laptop.
 
-The Patch script will patch the Remote Control Daemon to prevent it from starting
-iTunes whenever you press the play button on the keyboard or an external remote
-control. This will only prevent iTunes from starting, all other functions (like
-play/pause while iTunes is _running_) will continue to work as before.
+Apple's _Remote Control Daemon_ (`rcd`) is responsible for trapping and
+dispatching these events.  This patch stops `rcd`, creates a backup, modifies its
+binary, and then relaunches the daemon.
 
-Lastly, this program will backup the original file in case if you would like to
-restore the original functionality.
+Behavior changes are as follows:
+* When no apps are open, pressing Play/Pause launches Spotify.
+  * Same behavior for single-click of inline-mic button on supported headphones
+* When Spotify is open, pressing Play/Pause toggles music playback.
+* Same behavior for single-click of inline-mic button
+* When Spotify is open, pressing Next Track on the keyboard skips to the next
+  track in Spotify.
+  * Same behavior for double-tap of inline-mic button
+* When Spotify is open, pressing Previous Track on the keyboard rewinds to the
+  beginning track in Spotify.
+  * Same behavior for triple-tap of inline-mic button
+* If another application that uses the media keys is open, the keys continue to
+  control that open application rather than Spotify.  (For example, this patch
+  does not hijack the play/pause button when VLC is open and is the front app,
+  or the most-recently-used application.)
 
+Side effects:
+* Keyboard buttons no longer work for controlling iTunes, even when Spotify is
+  closed.
+* Keyboard buttons no longer work for controlling QuickTime Player, even when
+  Spotify is closed.
+
+Thanks to Farhan Ahmad, who inspired this patch and provided a starting point.
+
+
+Disclaimer
+----------
+
+This patch modifies a core part of your operating system.  Use at your own risk.
+This program comes with ABSOLUTELY NO WARRANTY; please see the included license
+file for details.
+
+Currently known to work under:
+
+* OS X Yosemite (10.10.1)
 
 
 General Information
 -------------------
-Author: Farhan Ahmad (<http://www.thebitguru.com/projects/iTunesPatch>)
+
+Author: Elliott Wood (<https://github.com/ewoodh2o>)
+
+Original: Farhan Ahmad (<http://www.thebitguru.com/projects/iTunesPatch>)
 
 
 Change Log
 ----------
+    2015-01-06, ew: Elliott Wood
+     * Altered patch for Spotify
+     * Version changed to 0.8.3.1
+
     2014-01-19, fa: Farhan Ahmad
      * Added the '-KILL' to killall command because rcd doesn't seem to respect SIGTERM
        anymore.  Thanks for @quicksnap (https://github.com/quicksnap) for helping
