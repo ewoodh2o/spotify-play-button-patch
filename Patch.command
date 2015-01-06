@@ -2,39 +2,17 @@
 
 # Title: Driver for patching the Apple Remote Control Daemon.
 # Description: This is a simple command line driver for patching the remote control
-#  daemon.  The actual patching is done by the python script (patch_bytes.py).
+#  daemon.  The actual patching is done by the Ruby script (edit_rcd_bin.rb).
 #
-# Author: Farhan Ahmad <farhan@thebitguru.com>
-# Website: http://www.thebitguru.com/projects/iTunesPatch
-#
-# Revision history:
-#  2010-11-18, fa:
-#   * Created
-#  2010-11-28, fa:
-#   * Updated to use patch_bytes.py script instead of the previously
-#     used bsdiff/bspatch method.
-#  2011-08-18, fa:
-#   * Added fix submitted by Michael Winestock to account for spaces
-#     in the directory name.
-#  2011-09-03, fa:
-#   * Added Michael's contact info 
-#     Michael Winestock  http://www.linkedin.com/pub/michael-winestock/18/579/972
-#  2013-05-11, fa:
-#   * Added step to self-sign the modified binary. This should
-#     prevent rcd from crashing on Mountain Lion.  Thanks to user48986 at
-#     http://apple.stackexchange.com/questions/64408/can-you-disable-a-code-signature-check
-#   * Changed version to 0.8.2.
-#  2014-01-19, fa: Farhan Ahmad
-#     * Added the '-KILL' to killall command because rcd doesn't seem to respect SIGTERM
-#       anymore.  Thanks for @quicksnap (https://github.com/quicksnap) for helping
-#       troubleshoot.
-#     * Version changed to 0.8.3
+# Author:   Elliott Wood <elliott@two-fish.com>
+# Original: Farhan Ahmad <farhan@thebitguru.com>
+# Website:  https://github.com/spotify-play-button-patch
 #
 # Technical notes:
 #   Create a backup of the original file (cp rcd rcd_original_os).
-#   Comment out (--) the iTunes launch lines in rcd.
+#   Call patch script to modify the executable.
 
-VERSION=0.8.3   # Version of the script.
+VERSION=0.8.3.1   # Version of the script.
 
 rcd_path=/System/Library/CoreServices/rcd.app/Contents/MacOS
 
@@ -102,7 +80,7 @@ if [[ $backup_count -ne 0 ]]; then
 	echo " 3. If iTunes started then the original file was successfully restored and "
 	echo "    you should have the original functionality back."
 	echo
-	echo "For questions and/or comments please visit http://www.thebitguru.com/projects/iTunesPatch"
+	echo "For questions and/or comments please visit https://github.com/spotify-play-button-patch"
 	exit
 fi
 
@@ -128,7 +106,7 @@ cp $rcd_path/rcd $rcd_path/$backup_filename
 echo " + Backed up the existing file as $backup_filename"
 echo " + Patching..."
 cd "`dirname \"$0\"`"
-./edit_rcd_bin.py $rcd_path/rcd
+./edit_rcd_bin.rb $rcd_path/rcd
 if [[ $? -eq 0 ]]; then
   echo " + Regenerating the code signature..."
   codesign -f -s - $rcd_path/rcd
@@ -142,11 +120,10 @@ if [[ $? -eq 0 ]]; then
 	echo
 	echo "Run this script again if you would like to restore the original functionality."
 else
-	echo " !!! Sorry, an unexpected error occurred while patching. Please email me all"
-	echo "     of the above text and attach $rcd_path/rcd "
-	echo "     for troubleshooting at farhan@thebitguru.com."
+	echo " !!! Sorry, an unexpected error occurred while patching. Please open a GitHub"
+	echo "     issue at https://github.com/spotify-play-button-patch."
 fi
 
 echo
 echo
-echo "For questions and/or comments please visit http://www.thebitguru.com/projects/iTunesPatch"
+echo "For questions and/or comments please visit https://github.com/ewoodh2o/spotify-play-button-patch"
