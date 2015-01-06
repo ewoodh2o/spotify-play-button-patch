@@ -41,7 +41,7 @@ REPLACEMENTS = {
   'tell application id "com.apple.iTunes" to launch' =>
     "tell application \"Spotify\" to launch\0",
   'tell application id "com.apple.iTunes" to get player state' =>
-    "tell application \"Spotify\" to launch\0",
+    "tell application \"Spotify\" to get player state\0",
   'tell application id "com.apple.iTunes" to playpause' =>
     "tell application \"Spotify\" to playpause\0",
   'tell application id "com.apple.iTunes" to next track' =>
